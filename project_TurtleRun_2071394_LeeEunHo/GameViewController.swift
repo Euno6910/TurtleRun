@@ -46,7 +46,23 @@ class GameViewController: UIViewController {
         blockView.layer.cornerRadius = 8
         view.addSubview(blockView)
 
-        // 3. 버튼을 맨 위로!
+        // 3. 코인(Coin) - 노란색 동그라미
+        let coinDiameter: CGFloat = 30
+        let coinX: CGFloat = 200 // 원하는 위치로 조정
+        let coinY: CGFloat = groundY - coinDiameter - 40 // 땅 위에 떠 있도록 조정
+        let coinView = UIView(frame: CGRect(
+            x: coinX,
+            y: coinY,
+            width: coinDiameter,
+            height: coinDiameter
+        ))
+        coinView.backgroundColor = UIColor.yellow
+        coinView.layer.cornerRadius = coinDiameter / 2 // 동그랗게
+        coinView.layer.borderWidth = 2
+        coinView.layer.borderColor = UIColor.orange.cgColor // 테두리(선택)
+        view.addSubview(coinView)
+
+        // 4. 버튼을 맨 위로!
         view.bringSubviewToFront(JumpButton)
         view.bringSubviewToFront(SlideButton)
 
@@ -112,11 +128,10 @@ class GameViewController: UIViewController {
     }
 
     @IBAction func SlideButtonTapped(_ sender: UIButton) {
-        print("슬라이드 버튼 눌림")  // 작동 확인용
         guard let turtle = Turtle else { return }
 
         if !isSliding {
-            // 💡 회전 + 아래로 이동 (y값 증가)
+            // 회전 + 아래로 이동 (y값 증가) 자연스럽게 애니메이션
             UIView.animate(withDuration: 0.2) {
                 let rotation = CGAffineTransform(rotationAngle: -.pi / 2)
                 let translation = CGAffineTransform(translationX: 0, y: 20) // 아래로 20pt
