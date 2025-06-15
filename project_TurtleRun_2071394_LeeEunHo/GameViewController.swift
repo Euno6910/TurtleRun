@@ -13,7 +13,7 @@ class GameViewController: UIViewController {
     var gravity: CGFloat = 1.1 // 중력 가속도
     var jumpPower: CGFloat = -20 // 점프 힘 (낮은 음수일수록 강함)
     var groundY: CGFloat = 0
-    var jumpTimer: Timer?
+    var displayLink: CADisplayLink?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,25 +58,47 @@ class GameViewController: UIViewController {
     }
 
     @IBAction func JumpButtonTapped(_ sender: UIButton) {
-        if isJumping { return } // 이미 점프 중이면 무시
+        // 이미 점프 중이라면 무시 (2중 점프 방지)
+        if isJumping { return }
+        
+        // 점프 상태로 설정
         isJumping = true
+        
+        // 초기 속도를 점프 파워로 설정 (위로 튀어오르게 하기 위함)
         velocity = jumpPower
 
-        jumpTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { [weak self] timer in
-            guard let self = self, let turtle = self.Turtle else { return }
-            // 속도에 따라 y값 변경
-            var frame = turtle.frame
-            frame.origin.y += self.velocity
-            self.velocity += self.gravity // 중력 적용
+        // 화면 업데이트를 위해 CADisplayLink 설정 (화면 주사율에 맞춰 반복 호출됨)
+        displayLink = CADisplayLink(target: self, selector: #selector(updateJump))
+        displayLink?.add(to: .main, forMode: .default)
+    }
 
-            // 지면에 닿으면 멈춤
-            if frame.origin.y >= self.groundY - frame.height {
-                frame.origin.y = self.groundY - frame.height
-                self.isJumping = false
-                self.velocity = 0
-                timer.invalidate()
-            }
-            turtle.frame = frame
+    @objc func updateJump() {
+        guard let turtle = self.Turtle else { return }
+
+        // 현재 거북이의 프레임을 복사
+        var frame = turtle.frame
+
+        // 수직 위치에 속도만큼 더해 위치 갱신 (위로 이동 시 velocity는 음수)
+        frame.origin.y += self.velocity
+        
+        // 중력 적용 (속도에 가속도 개념처럼 계속 더해짐)
+        self.velocity += self.gravity
+
+        // 바닥에 도착한 경우
+        if frame.origin.y >= self.groundY - frame.height {
+            // 위치를 정확히 바닥에 맞춤
+            frame.origin.y = self.groundY - frame.height
+
+            // 점프 상태 해제 및 속도 초기화
+            self.isJumping = false
+            self.velocity = 0
+
+            // displayLink 종료 (애니메이션 루프 정지)
+            displayLink?.invalidate()
+            displayLink = nil
         }
+
+        // 실제 거북이 위치 업데이트
+        turtle.frame = frame
     }
 }
