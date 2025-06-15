@@ -9,26 +9,25 @@
 /* Begin PBXBuildFile section */
 		9B7CA64C2DFECB8D00BA42B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7CA64B2DFECB8D00BA42B4 /* AppDelegate.swift */; };
 		9B7CA64E2DFECB8D00BA42B4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7CA64D2DFECB8D00BA42B4 /* SceneDelegate.swift */; };
-		9B7CA6502DFECB8D00BA42B4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7CA64F2DFECB8D00BA42B4 /* ViewController.swift */; };
 		9B7CA6532DFECB8D00BA42B4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B7CA6512DFECB8D00BA42B4 /* Main.storyboard */; };
 		9B7CA6552DFECB9200BA42B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B7CA6542DFECB9200BA42B4 /* Assets.xcassets */; };
 		9B7CA6582DFECB9300BA42B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B7CA6562DFECB9300BA42B4 /* LaunchScreen.storyboard */; };
 		9B7CA6602DFED75500BA42B4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B7CA65F2DFED75500BA42B4 /* GoogleService-Info.plist */; };
 		9B7CA6632DFEE10B00BA42B4 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7CA6622DFEE10B00BA42B4 /* FirebaseAuth */; };
-		9B7CA6652DFEE10B00BA42B4 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7CA6642DFEE10B00BA42B4 /* FirebaseStorage */; };
 		9B7CA6682DFEE20500BA42B4 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7CA6672DFEE20500BA42B4 /* FirebaseDatabase */; };
+		9B7CA66A2DFEE6EC00BA42B4 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7CA6692DFEE6EB00BA42B4 /* GameViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9B7CA6482DFECB8D00BA42B4 /* project_TurtleRun_2071394_LeeEunHo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = project_TurtleRun_2071394_LeeEunHo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B7CA64B2DFECB8D00BA42B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9B7CA64D2DFECB8D00BA42B4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9B7CA64F2DFECB8D00BA42B4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9B7CA6522DFECB8D00BA42B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9B7CA6542DFECB9200BA42B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9B7CA6572DFECB9300BA42B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9B7CA6592DFECB9300BA42B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B7CA65F2DFED75500BA42B4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9B7CA6692DFEE6EB00BA42B4 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +37,6 @@
 			files = (
 				9B7CA6682DFEE20500BA42B4 /* FirebaseDatabase in Frameworks */,
 				9B7CA6632DFEE10B00BA42B4 /* FirebaseAuth in Frameworks */,
-				9B7CA6652DFEE10B00BA42B4 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,9 +66,9 @@
 				9B7CA65F2DFED75500BA42B4 /* GoogleService-Info.plist */,
 				9B7CA64B2DFECB8D00BA42B4 /* AppDelegate.swift */,
 				9B7CA64D2DFECB8D00BA42B4 /* SceneDelegate.swift */,
-				9B7CA64F2DFECB8D00BA42B4 /* ViewController.swift */,
 				9B7CA6512DFECB8D00BA42B4 /* Main.storyboard */,
 				9B7CA6542DFECB9200BA42B4 /* Assets.xcassets */,
+				9B7CA6692DFEE6EB00BA42B4 /* GameViewController.swift */,
 				9B7CA6562DFECB9300BA42B4 /* LaunchScreen.storyboard */,
 				9B7CA6592DFECB9300BA42B4 /* Info.plist */,
 			);
@@ -102,7 +100,6 @@
 			name = project_TurtleRun_2071394_LeeEunHo;
 			packageProductDependencies = (
 				9B7CA6622DFEE10B00BA42B4 /* FirebaseAuth */,
-				9B7CA6642DFEE10B00BA42B4 /* FirebaseStorage */,
 				9B7CA6672DFEE20500BA42B4 /* FirebaseDatabase */,
 			);
 			productName = project_TurtleRun_2071394_LeeEunHo;
@@ -163,8 +160,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9B7CA6502DFECB8D00BA42B4 /* ViewController.swift in Sources */,
 				9B7CA64C2DFECB8D00BA42B4 /* AppDelegate.swift in Sources */,
+				9B7CA66A2DFEE6EC00BA42B4 /* GameViewController.swift in Sources */,
 				9B7CA64E2DFECB8D00BA42B4 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -382,11 +379,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9B7CA6612DFEE10B00BA42B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
-		};
-		9B7CA6642DFEE10B00BA42B4 /* FirebaseStorage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B7CA6612DFEE10B00BA42B4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
 		};
 		9B7CA6672DFEE20500BA42B4 /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
