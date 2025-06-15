@@ -52,10 +52,13 @@
                                     <action selector="JumpButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="abH-zL-I9I"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Ye-cu-RiN">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1D-rf-OKN" userLabel="SlideButton">
                                 <rect key="frame" x="752" y="341" width="50" height="52"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="Slide"/>
+                                <connections>
+                                    <action selector="SlideButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mMq-Q8-Zwb"/>
+                                </connections>
                             </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Turtle" translatesAutoresizingMaskIntoConstraints="NO" id="Hfp-fP-1lW">
                                 <rect key="frame" x="40" y="205" width="93" height="128"/>
@@ -69,7 +72,7 @@
                         <outlet property="CoinLabel" destination="gRI-2c-uap" id="3uq-g4-K5f"/>
                         <outlet property="JumpButton" destination="L7y-rx-Zyy" id="VUs-Je-8Ks"/>
                         <outlet property="ScoreLabel" destination="7A5-Sl-79u" id="ZRM-xd-x4y"/>
-                        <outlet property="SlideButton" destination="6Ye-cu-RiN" id="8VF-Nq-dKU"/>
+                        <outlet property="SlideButton" destination="S1D-rf-OKN" id="4YJ-AC-pRk"/>
                         <outlet property="Turtle" destination="Hfp-fP-1lW" id="7bc-8w-K3h"/>
                     </connections>
                 </viewController>

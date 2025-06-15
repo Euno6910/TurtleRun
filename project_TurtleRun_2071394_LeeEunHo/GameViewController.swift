@@ -14,6 +14,7 @@ class GameViewController: UIViewController {
     var jumpPower: CGFloat = -20 // 점프 힘 (낮은 음수일수록 강함)
     var groundY: CGFloat = 0
     var displayLink: CADisplayLink?
+    var isSliding = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,6 +71,14 @@ class GameViewController: UIViewController {
         // 화면 업데이트를 위해 CADisplayLink 설정 (화면 주사율에 맞춰 반복 호출됨)
         displayLink = CADisplayLink(target: self, selector: #selector(updateJump))
         displayLink?.add(to: .main, forMode: .default)
+
+        // 점프 시 슬라이드 해제
+        if isSliding, let turtle = Turtle {
+            UIView.animate(withDuration: 0.2) {
+                turtle.transform = .identity
+            }
+            isSliding = false
+        }
     }
 
     @objc func updateJump() {
@@ -100,5 +109,26 @@ class GameViewController: UIViewController {
 
         // 실제 거북이 위치 업데이트
         turtle.frame = frame
+    }
+
+    @IBAction func SlideButtonTapped(_ sender: UIButton) {
+        print("슬라이드 버튼 눌림")  // 작동 확인용
+        guard let turtle = Turtle else { return }
+
+        if !isSliding {
+            // 💡 회전 + 아래로 이동 (y값 증가)
+            UIView.animate(withDuration: 0.2) {
+                let rotation = CGAffineTransform(rotationAngle: -.pi / 2)
+                let translation = CGAffineTransform(translationX: 0, y: 20) // 아래로 20pt
+                turtle.transform = rotation.concatenating(translation)
+            }
+            isSliding = true
+        } else {
+            // 원래 상태로 복귀
+            UIView.animate(withDuration: 0.2) {
+                turtle.transform = .identity
+            }
+            isSliding = false
+        }
     }
 }
