@@ -56,7 +56,7 @@ class GameViewController: UIViewController {
         moveTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(moveObjects), userInfo: nil, repeats: true)
 
         // 시작하자마자 블록 1개 생성
-        spawnBlock()
+        //spawnBlock()
 
         // 블록 생성 타이머 (11초 간격)
         blockSpawnTimer = Timer.scheduledTimer(withTimeInterval: blockSpawnInterval, repeats: true) { [weak self] _ in
@@ -149,7 +149,7 @@ class GameViewController: UIViewController {
 
     func spawnBlock() { //블럭 생성
         let blockWidth: CGFloat = 40
-        let blockHeight: CGFloat = CGFloat.random(in: 30...75)
+        let blockHeight: CGFloat = CGFloat.random(in: 30...60)
         let blockY = CGFloat.random(in: 100...(groundY - blockHeight))
         
         let blockView = UIView(frame: CGRect(
@@ -185,14 +185,18 @@ class GameViewController: UIViewController {
     }
 
     @objc func moveObjects() { //우에서 좌로 오브젝트이동
-        let moveSpeed: CGFloat = 65 // 이동 속도(이동 속도를 늘리고 빈도를 줄임으로써 렉 최적화)
+        let moveSpeed: CGFloat = 80 // 이동 속도(이동 속도를 늘리고 빈도를 줄임으로써 렉 최적화)
         for block in blocks {
             block.frame.origin.x -= moveSpeed
         }
         for coin in coins {
             coin.frame.origin.x -= moveSpeed
         }
-        // 화면 밖으로 나간 오브젝트는 제거(메모리 관리)
+        
+        // 충돌 체크
+        checkCollisions()
+        
+        // 화면 밖으로 나간 오브젝트 제거
         blocks.removeAll { block in
             if block.frame.maxX < 0 {
                 block.removeFromSuperview()
@@ -206,6 +210,31 @@ class GameViewController: UIViewController {
                 return true
             }
             return false
+        }
+    }
+    
+    func checkCollisions() {
+        guard let turtle = Turtle else { return }
+        
+        // 거북이의 현재 프레임
+        let turtleFrame = turtle.frame
+        
+        // 블록과의 충돌 체크
+        for block in blocks {
+            if turtleFrame.intersects(block.frame) {
+                print("충돌!")
+                return
+            }
+        }
+        
+        // 코인과의 충돌 체크
+        for (index, coin) in coins.enumerated() {
+            if turtleFrame.intersects(coin.frame) {
+                print("코인!")
+                coins.remove(at: index)
+                coin.removeFromSuperview()
+                return
+            }
         }
     }
 }
