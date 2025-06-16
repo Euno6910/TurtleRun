@@ -206,22 +206,19 @@ class GameViewController: UIViewController {
         // 구름 크기 고정
         let cloudWidth: CGFloat = 100
         let cloudHeight: CGFloat = 60
-        let cloudY: CGFloat = 50  // 상단에 고정
         
         // 구름 이미지뷰 생성
         let cloudView = UIImageView(image: UIImage(named: "Cloud"))
         cloudView.frame = CGRect(
             x: view.frame.width,
-            y: cloudY,
+            y: 100,
             width: cloudWidth,
             height: cloudHeight
         )
         
-        // 구름 투명도 설정
-        cloudView.alpha = 0.9
-        
-        // 구름을 스코어/코인 라벨 뒤로 보내기
-        view.insertSubview(cloudView, belowSubview: ScoreLabel)
+        // 구름을 모든 뷰 뒤로 보내기
+        view.addSubview(cloudView)
+        view.sendSubviewToBack(cloudView)
         cloud = cloudView
     }
 
@@ -282,6 +279,14 @@ class GameViewController: UIViewController {
         for block in blocks {
             if turtle.frame.intersects(block.frame) {
                 print("충돌!")
+                // 모든 타이머 중지
+                moveTimer?.invalidate()
+                blockSpawnTimer?.invalidate()
+                coinSpawnTimer?.invalidate()
+                displayLink?.invalidate()
+                // 메인화면으로 이동
+                self.dismiss(animated: true)
+                return
             }
         }
 
