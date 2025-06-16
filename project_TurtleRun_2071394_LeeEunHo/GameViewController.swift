@@ -17,7 +17,8 @@ class GameViewController: UIViewController {
     var displayLink: CADisplayLink?
     var isSliding = false
     var blocks: [UIView] = []
-    var coins: [UIView] = []
+    var coins: [UIView] = []      // 코인 뷰 배열
+    var coinCount: Int = 0        // 코인 개수(정수)
     var cloud: UIView?  // 단일 구름
     var moveTimer: Timer?
     var blockSpawnTimer: Timer?
@@ -26,6 +27,7 @@ class GameViewController: UIViewController {
     var coinSpawnCount = 0
     let blockSpawnInterval: TimeInterval = 11.0
     let coinSpawnInterval: TimeInterval = 17.0
+    var coinIncreaseLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +44,13 @@ class GameViewController: UIViewController {
         groundView.backgroundColor = UIColor.black
         view.addSubview(groundView)
 
+        // 코인 증가 라벨 설정
+        coinIncreaseLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
+        coinIncreaseLabel.textColor = .yellow
+        coinIncreaseLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        coinIncreaseLabel.alpha = 0
+        view.addSubview(coinIncreaseLabel)
+
         // 버튼을 맨 위로
         view.bringSubviewToFront(JumpButton)
         view.bringSubviewToFront(SlideButton)
@@ -52,6 +61,8 @@ class GameViewController: UIViewController {
             frame.origin.y = groundY - frame.height
             turtle.frame = frame
         }
+        // CoinLabel 초기값 설정
+        CoinLabel.text = "0"
         
         // 시작하자마자 구름 1개 생성
         spawnCloud()
@@ -237,7 +248,7 @@ class GameViewController: UIViewController {
         }
         
         // 충돌 체크
-        checkCollisions()
+        checkCollision()
         
         // 화면 밖으로 나간 오브젝트 제거
         blocks.removeAll { block in
@@ -256,28 +267,42 @@ class GameViewController: UIViewController {
         }
     }
     
-    func checkCollisions() {
+    func checkCollision() {
         guard let turtle = Turtle else { return }
-        
-        // 거북이의 현재 프레임
-        let turtleFrame = turtle.frame
-        
+
         // 블록과의 충돌 체크
         for block in blocks {
-            if turtleFrame.intersects(block.frame) {
+            if turtle.frame.intersects(block.frame) {
                 print("충돌!")
-                return
             }
         }
-        
+
         // 코인과의 충돌 체크
         for (index, coin) in coins.enumerated() {
-            if turtleFrame.intersects(coin.frame) {
+            if turtle.frame.intersects(coin.frame) {
                 print("코인!")
                 coins.remove(at: index)
                 coin.removeFromSuperview()
+                coinCount += 1
+                updateCoinLabel()
+                showCoinIncrease()
                 return
             }
         }
+    }
+
+    func updateCoinLabel() {
+        CoinLabel.text = "\(coinCount)"
+    }
+
+    func showCoinIncrease() {
+        coinIncreaseLabel.text = "+1"
+        coinIncreaseLabel.center = CGPoint(x: CoinLabel.center.x, y: CoinLabel.center.y - 20)
+        coinIncreaseLabel.alpha = 1
+
+        UIView.animate(withDuration: 1.0, animations: {
+            self.coinIncreaseLabel.alpha = 0
+            self.coinIncreaseLabel.center.y -= 30
+        })
     }
 }
