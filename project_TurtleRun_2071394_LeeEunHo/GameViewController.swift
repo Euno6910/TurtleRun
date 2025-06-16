@@ -18,12 +18,17 @@ class GameViewController: UIViewController {
     var blocks: [UIView] = []
     var coins: [UIView] = []
     var moveTimer: Timer?
+    var blockSpawnTimer: Timer?
+    var coinSpawnTimer: Timer?
     var blockSpawnCount = 0
+    var coinSpawnCount = 0
+    let blockSpawnInterval: TimeInterval = 11.0
+    let coinSpawnInterval: TimeInterval = 17.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        //땅(Ground)
+        //배경 설정
+        //땅(Ground) 생성
         let groundHeight: CGFloat = 100 // 땅 높이
         groundY = view.frame.height - groundHeight - view.safeAreaInsets.bottom
         let groundView = UIView(frame: CGRect(
@@ -39,22 +44,33 @@ class GameViewController: UIViewController {
         view.bringSubviewToFront(JumpButton)
         view.bringSubviewToFront(SlideButton)
 
-        // 캐릭터 초기 위치(지면 위)
+        // 캐릭터 초기 위치(지면 위)생성
         if let turtle = Turtle {
             var frame = turtle.frame
             frame.origin.y = groundY - frame.height
             turtle.frame = frame
         }
-
+        
+        //오브젝트 생성
         //이동 타이머 (0.2초 간격)
-        moveTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(moveObjects), userInfo: nil, repeats: true) //너무 낮게하면 프라임드랍..
+        moveTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(moveObjects), userInfo: nil, repeats: true)
 
-        // 시작하자마자 블록 1개, 코인 1개 생성
-        spawnBlockAndMaybeCoin(forceCoin: true)
+        // 시작하자마자 블록 1개 생성
+        spawnBlock()
 
-        // 블록 생성 타이머 (10초 간격)
-        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
-            self.spawnBlockAndMaybeCoin(forceCoin: false)
+        // 블록 생성 타이머 (11초 간격)
+        blockSpawnTimer = Timer.scheduledTimer(withTimeInterval: blockSpawnInterval, repeats: true) { [weak self] _ in
+            self?.blockSpawnCount += 1
+            self?.spawnBlock()
+        }
+
+        // 코인 생성 타이머 (17초 간격)
+        coinSpawnTimer = Timer.scheduledTimer(withTimeInterval: coinSpawnInterval, repeats: true) { [weak self] _ in
+            self?.coinSpawnCount += 1
+            // 공배수(187초)에서는 코인 생성하지 않음(충돌처리보다 이게 렉 안걸림)
+            if (self?.blockSpawnCount ?? 0) * 11 != (self?.coinSpawnCount ?? 0) * 17 {
+                self?.spawnCoin()
+            }
         }
     }
 
@@ -131,26 +147,11 @@ class GameViewController: UIViewController {
         }
     }
 
-    func spawnBlockAndMaybeCoin(forceCoin: Bool) {
-        let coinDiameter: CGFloat = 30
-        let minCoinY = CGFloat(100)
-        let maxCoinY = groundY - coinDiameter - 20
-        var coinY: CGFloat = 0
-        var shouldSpawnCoin = false
-        blockSpawnCount += 1
-        if blockSpawnCount % 2 == 0 || forceCoin {
-            shouldSpawnCoin = true
-            coinY = CGFloat.random(in: minCoinY...maxCoinY)
-        }
-        // 블록 높이
+    func spawnBlock() { //블럭 생성
         let blockWidth: CGFloat = 40
-        let blockHeight: CGFloat = CGFloat.random(in: coinDiameter...(coinDiameter * 2.5))
-        // 블록 y 위치: 코인과 겹치지 않게, 코인과 최소 10pt 이상 떨어지게
-        var blockY: CGFloat
-        repeat {
-            blockY = CGFloat.random(in: minCoinY...(groundY - blockHeight))
-        } while shouldSpawnCoin && abs((blockY + blockHeight/2) - (coinY + coinDiameter/2)) < (coinDiameter/2 + blockHeight/2 + 10)
-        // 블록 생성
+        let blockHeight: CGFloat = CGFloat.random(in: 30...75)
+        let blockY = CGFloat.random(in: 100...(groundY - blockHeight))
+        
         let blockView = UIView(frame: CGRect(
             x: view.frame.width,
             y: blockY,
@@ -161,25 +162,30 @@ class GameViewController: UIViewController {
         blockView.layer.cornerRadius = 8
         view.addSubview(blockView)
         blocks.append(blockView)
-        // 코인 생성
-        if shouldSpawnCoin {
-            let coinView = UIView(frame: CGRect(
-                x: view.frame.width,
-                y: coinY,
-                width: coinDiameter,
-                height: coinDiameter
-            ))
-            coinView.backgroundColor = UIColor.yellow
-            coinView.layer.cornerRadius = coinDiameter / 2
-            coinView.layer.borderWidth = 2
-            coinView.layer.borderColor = UIColor.orange.cgColor
-            view.addSubview(coinView)
-            coins.append(coinView)
-        }
+    }
+
+    func spawnCoin() { //코인 생성
+        let coinDiameter: CGFloat = 30
+        let minCoinY = CGFloat(100)
+        let maxCoinY = groundY - coinDiameter - 20
+        let coinY = CGFloat.random(in: minCoinY...maxCoinY)
+        
+        let coinView = UIView(frame: CGRect(
+            x: view.frame.width,
+            y: coinY,
+            width: coinDiameter,
+            height: coinDiameter
+        ))
+        coinView.backgroundColor = UIColor.yellow
+        coinView.layer.cornerRadius = coinDiameter / 2
+        coinView.layer.borderWidth = 2
+        coinView.layer.borderColor = UIColor.orange.cgColor
+        view.addSubview(coinView)
+        coins.append(coinView)
     }
 
     @objc func moveObjects() { //우에서 좌로 오브젝트이동
-        let moveSpeed: CGFloat = 50 // 이동 속도(조절 가능)
+        let moveSpeed: CGFloat = 65 // 이동 속도(이동 속도를 늘리고 빈도를 줄임으로써 렉 최적화)
         for block in blocks {
             block.frame.origin.x -= moveSpeed
         }
