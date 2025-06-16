@@ -27,6 +27,7 @@ class GameViewController: UIViewController {
     var coinSpawnCount = 0
     let blockSpawnInterval: TimeInterval = 11.0
     let coinSpawnInterval: TimeInterval = 17.0
+    var score: Int = 0            // 점수
     var coinIncreaseLabel: UILabel!
 
     override func viewDidLoad() {
@@ -225,15 +226,16 @@ class GameViewController: UIViewController {
     }
 
     @objc func moveObjects() { //우에서 좌로 오브젝트이동
-        let moveSpeed: CGFloat = 50 // 블록 이동 속도 적당하게
+        let moveSpeed: CGFloat = 40 // 블록 이동 속도 적당하게
         let cloudSpeed: CGFloat = 20 // 구름 이동 속도 빠르게
         
         // 구름 이동
         if let cloud = cloud {
             cloud.frame.origin.x -= cloudSpeed
-            
-            // 구름이 화면 밖으로 나가면 제거하고 새로 생성
+            // 구름이 화면 밖으로 나가면 점수 증가 후 제거 및 새로 생성
             if cloud.frame.maxX < 0 {
+                score += 777 * (coinCount + 1)
+                updateScoreLabel()
                 cloud.removeFromSuperview()
                 spawnCloud()
             }
@@ -251,22 +253,28 @@ class GameViewController: UIViewController {
         checkCollision()
         
         // 화면 밖으로 나간 오브젝트 제거
-        blocks.removeAll { block in
-            if block.frame.maxX < 0 {
-                block.removeFromSuperview()
-                return true
-            }
-            return false
-        }
-        coins.removeAll { coin in
-            if coin.frame.maxX < 0 {
-                coin.removeFromSuperview()
-                return true
-            }
-            return false
-        }
+        removeOffscreenObjects()
     }
     
+    func removeOffscreenObjects() {
+        // 화면 밖으로 나간 블록, 코인 삭제 및 블록 점수 증가 처리
+        for (index, block) in blocks.enumerated().reversed() {
+            if block.frame.maxX < 0 {
+                block.removeFromSuperview()
+                blocks.remove(at: index)
+                // 블록 삭제 시 점수 증가
+                score += 111 * (coinCount + 1)
+                updateScoreLabel()
+            }
+        }
+        for (index, coin) in coins.enumerated().reversed() {
+            if coin.frame.maxX < 0 {
+                coin.removeFromSuperview()
+                coins.remove(at: index)
+            }
+        }
+    }
+
     func checkCollision() {
         guard let turtle = Turtle else { return }
 
@@ -286,21 +294,28 @@ class GameViewController: UIViewController {
                 coinCount += 1
                 updateCoinLabel()
                 showCoinIncrease()
+                // 코인 획득 시 점수 증가
+                score += 77 * coinCount
+                updateScoreLabel()
                 return
             }
         }
     }
 
-    func updateCoinLabel() {
+    func updateScoreLabel() {
+        ScoreLabel.text = "\(score)"
+    }
+
+    func updateCoinLabel() { 
         CoinLabel.text = "\(coinCount)"
     }
 
-    func showCoinIncrease() {
+    func showCoinIncrease() {  //코인 획득 시 점수 증가 라벨 표시
         coinIncreaseLabel.text = "+1"
         coinIncreaseLabel.center = CGPoint(x: CoinLabel.center.x, y: CoinLabel.center.y - 20)
         coinIncreaseLabel.alpha = 1
 
-        UIView.animate(withDuration: 1.0, animations: {
+        UIView.animate(withDuration: 1.0, animations: { //획득 애니메이션 1초 후 라벨 사라짐
             self.coinIncreaseLabel.alpha = 0
             self.coinIncreaseLabel.center.y -= 30
         })
