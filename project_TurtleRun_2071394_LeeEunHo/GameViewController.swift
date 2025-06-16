@@ -9,6 +9,7 @@ class GameViewController: UIViewController {
     @IBOutlet weak var Turtle: UIImageView!
 
     var isJumping = false
+    var canDoubleJump = false  // 더블 점프 가능 여부
     var velocity: CGFloat = 0
     var gravity: CGFloat = 1.1 // 중력 가속도
     var jumpPower: CGFloat = -20 // 점프 힘 (낮은 음수일수록 강함)
@@ -17,6 +18,7 @@ class GameViewController: UIViewController {
     var isSliding = false
     var blocks: [UIView] = []
     var coins: [UIView] = []
+    var cloud: UIView?  // 단일 구름
     var moveTimer: Timer?
     var blockSpawnTimer: Timer?
     var coinSpawnTimer: Timer?
@@ -51,6 +53,9 @@ class GameViewController: UIViewController {
             turtle.frame = frame
         }
         
+        // 시작하자마자 구름 1개 생성
+        spawnCloud()
+        
         //오브젝트 생성
         //이동 타이머 (0.2초 간격)
         moveTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(moveObjects), userInfo: nil, repeats: true)
@@ -75,25 +80,25 @@ class GameViewController: UIViewController {
     }
 
     @IBAction func JumpButtonTapped(_ sender: UIButton) {
-        // 이미 점프 중이라면 무시 (2중 점프 방지)
-        if isJumping { return }
-        
-        // 점프 상태로 설정
-        isJumping = true
-        
-        // 초기 속도를 점프 파워로 설정 (위로 튀어오르게 하기 위함)
-        velocity = jumpPower
-
-        // 화면 업데이트를 위해 CADisplayLink 설정 (화면 주사율에 맞춰 반복 호출됨) 타이머보다 시뮬로 보기에 나은듯.
-        displayLink = CADisplayLink(target: self, selector: #selector(updateJump))
-        displayLink?.add(to: .main, forMode: .default)
-
-        // 점프 시 슬라이드 해제
-        if isSliding, let turtle = Turtle {
-            UIView.animate(withDuration: 0.2) {
-                turtle.transform = .identity
+        if !isJumping {
+            // 첫 점프
+            isJumping = true
+            canDoubleJump = true
+            velocity = jumpPower
+            displayLink = CADisplayLink(target: self, selector: #selector(updateJump))
+            displayLink?.add(to: .main, forMode: .default)
+            
+            // 점프 시 슬라이드 해제
+            if isSliding, let turtle = Turtle {
+                UIView.animate(withDuration: 0.2) {
+                    turtle.transform = .identity
+                }
+                isSliding = false
             }
-            isSliding = false
+        } else if canDoubleJump {
+            // 더블 점프
+            canDoubleJump = false
+            velocity = jumpPower * 0.8  // 더블 점프는 약간 약하게
         }
     }
 
@@ -116,6 +121,7 @@ class GameViewController: UIViewController {
 
             // 점프 상태 해제 및 속도 초기화
             self.isJumping = false
+            self.canDoubleJump = false
             self.velocity = 0
 
             // displayLink 종료 (애니메이션 루프 정지)
@@ -184,8 +190,45 @@ class GameViewController: UIViewController {
         coins.append(coinView)
     }
 
+    func spawnCloud() {
+        // 구름 크기 고정
+        let cloudWidth: CGFloat = 100
+        let cloudHeight: CGFloat = 60
+        let cloudY: CGFloat = 50  // 상단에 고정
+        
+        // 구름 이미지뷰 생성
+        let cloudView = UIImageView(image: UIImage(named: "Cloud"))
+        cloudView.frame = CGRect(
+            x: view.frame.width,
+            y: cloudY,
+            width: cloudWidth,
+            height: cloudHeight
+        )
+        
+        // 구름 투명도 설정
+        cloudView.alpha = 0.9
+        
+        // 구름을 스코어/코인 라벨 뒤로 보내기
+        view.insertSubview(cloudView, belowSubview: ScoreLabel)
+        cloud = cloudView
+    }
+
     @objc func moveObjects() { //우에서 좌로 오브젝트이동
-        let moveSpeed: CGFloat = 80 // 이동 속도(이동 속도를 늘리고 빈도를 줄임으로써 렉 최적화)
+        let moveSpeed: CGFloat = 50 // 블록 이동 속도 적당하게
+        let cloudSpeed: CGFloat = 20 // 구름 이동 속도 빠르게
+        
+        // 구름 이동
+        if let cloud = cloud {
+            cloud.frame.origin.x -= cloudSpeed
+            
+            // 구름이 화면 밖으로 나가면 제거하고 새로 생성
+            if cloud.frame.maxX < 0 {
+                cloud.removeFromSuperview()
+                spawnCloud()
+            }
+        }
+        
+        // 기존 오브젝트 이동
         for block in blocks {
             block.frame.origin.x -= moveSpeed
         }
