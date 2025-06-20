@@ -11,7 +11,7 @@
         <!--Main View Controller-->
         <scene sceneID="10z-oK-Hfa">
             <objects>
-                <viewController id="cea-V0-zwk" userLabel="Main View Controller" customClass="MainViewController" customModule="project_TurtleRun_2071394_LeeEunHo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="cea-V0-zwk" userLabel="Main View Controller" customClass="MainViewController" customModule="project_TurtleRun_2071394_LeeEunHo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hvt-mB-cql">
                         <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -62,6 +62,7 @@
                             <constraint firstItem="DFO-6p-tvQ" firstAttribute="bottom" secondItem="lwj-ip-EIh" secondAttribute="bottom" id="u82-nO-64y"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="hBx-Iq-9Gj"/>
                     <connections>
                         <outlet property="GuideButton" destination="lrM-sO-1QT" id="r9Q-Fg-rXE"/>
                         <outlet property="LoginButton" destination="arX-dd-2Gv" id="Fkk-lM-ihU"/>
@@ -179,11 +180,99 @@
                         <outlet property="ScoreLabel" destination="7A5-Sl-79u" id="ZRM-xd-x4y"/>
                         <outlet property="SlideButton" destination="S1D-rf-OKN" id="4YJ-AC-pRk"/>
                         <outlet property="Turtle" destination="Hfp-fP-1lW" id="7bc-8w-K3h"/>
+                        <segue destination="HgR-hO-36W" kind="show" identifier="gameOver" id="e2F-E8-O4J"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-155.35714285714286" y="127.53623188405798"/>
+        </scene>
+        <!--Result View Controller-->
+        <scene sceneID="agW-Zm-VLs">
+            <objects>
+                <viewController storyboardIdentifier="ResultViewController" id="HgR-hO-36W" customClass="ResultViewController" customModule="project_TurtleRun_2071394_LeeEunHo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GlC-9n-vYS">
+                        <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="GFc-9a-qBB">
+                                <rect key="frame" x="395.5" y="170" width="105" height="118"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6OM-f2-kPf">
+                                        <rect key="frame" x="0.5" y="0.0" width="104" height="48"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="다시하기"/>
+                                        <connections>
+                                            <action selector="startButtonTapped:" destination="HgR-hO-36W" eventType="touchUpInside" id="nCE-Sc-gx1"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1v-tz-oSX">
+                                        <rect key="frame" x="0.0" y="68" width="105" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="LOn-qG-tVq"/>
+                                            <constraint firstAttribute="width" constant="105" id="rQ7-a5-9zw"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="메인으로"/>
+                                        <connections>
+                                            <action selector="mainButtonTapped:" destination="HgR-hO-36W" eventType="touchUpInside" id="5WJ-WZ-leK"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="105" id="mFf-6W-MY9"/>
+                                    <constraint firstAttribute="height" constant="118" id="z73-5f-F25"/>
+                                </constraints>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="vyp-0W-R49">
+                                <rect key="frame" x="343" y="40" width="210" height="110"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="최종 점수" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QsM-vm-kBO">
+                                        <rect key="frame" x="5" y="0.0" width="200" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="XDF-MA-fUD"/>
+                                            <constraint firstAttribute="width" constant="200" id="u64-wE-Z9I"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xAH-j9-9nq">
+                                        <rect key="frame" x="5" y="70" width="200" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="200" id="hQM-lH-fzQ"/>
+                                            <constraint firstAttribute="height" constant="40" id="lfy-rJ-1pI"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="210" id="1uz-bM-co4"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="1Y4-sw-QfK"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="GFc-9a-qBB" firstAttribute="top" secondItem="vyp-0W-R49" secondAttribute="bottom" constant="20" id="Ici-ah-vrV"/>
+                            <constraint firstItem="vyp-0W-R49" firstAttribute="centerX" secondItem="GlC-9n-vYS" secondAttribute="centerX" id="Mse-Sg-ubo"/>
+                            <constraint firstItem="1Y4-sw-QfK" firstAttribute="bottom" secondItem="GFc-9a-qBB" secondAttribute="bottom" constant="105" id="bOj-FY-OUq"/>
+                            <constraint firstItem="GFc-9a-qBB" firstAttribute="centerX" secondItem="GlC-9n-vYS" secondAttribute="centerX" id="xk2-7T-gZc"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="ua9-8a-shc"/>
+                    <connections>
+                        <outlet property="mainButton" destination="w1v-tz-oSX" id="GC9-y3-GF1"/>
+                        <outlet property="scoreLabel" destination="xAH-j9-9nq" id="1Ra-er-HQK"/>
+                        <outlet property="startButton" destination="6OM-f2-kPf" id="EPa-SO-baQ"/>
+                        <segue destination="cea-V0-zwk" kind="show" identifier="resultTomain" id="0mG-gU-Pj0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZcJ-nY-BzS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="525.66964285714289" y="127.53623188405798"/>
         </scene>
     </scenes>
     <resources>

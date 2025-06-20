@@ -284,8 +284,19 @@ class GameViewController: UIViewController {
                 blockSpawnTimer?.invalidate()
                 coinSpawnTimer?.invalidate()
                 displayLink?.invalidate()
-                // 메인화면으로 이동
-                self.dismiss(animated: true)
+                
+                // ResultViewController를 스토리보드 ID를 이용해 인스턴스화합니다.
+                guard let resultVC = self.storyboard?.instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController else {
+                    // 실패 시 기존처럼 메인으로 돌아갑니다.
+                    self.dismiss(animated: true, completion: nil)
+                    return
+                }
+                
+                // 최종 점수를 전달하고 화면을 전환합니다.
+                resultVC.finalScore = self.score
+                resultVC.modalPresentationStyle = .overCurrentContext
+                resultVC.modalTransitionStyle = .crossDissolve
+                self.present(resultVC, animated: true, completion: nil)
                 return
             }
         }

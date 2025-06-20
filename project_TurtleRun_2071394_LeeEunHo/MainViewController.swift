@@ -23,5 +23,10 @@ class MainViewController: UIViewController {
         view.layer.insertSublayer(gradientLayer, at: 0)
     }
 
+    // "다시하기" 시 ResultViewController의 요청을 받아 게임을 재시작하는 함수
+    func restartGame() {
+        performSegue(withIdentifier: "StartGame", sender: nil)
+    }
+
 
 }
