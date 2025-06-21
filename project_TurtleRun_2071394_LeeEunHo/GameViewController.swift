@@ -17,7 +17,7 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
     var isJumping = false
     var canDoubleJump = false  // 더블 점프 가능 여부
     var velocity: CGFloat = 0
-    var gravity: CGFloat = 1.1 // 중력 가속도
+    var gravity: CGFloat = 0.8 // 중력 가속도. 낮을수록 천천히 떨어짐 (기존 1.1)
     var jumpPower: CGFloat = -20 // 점프 힘 (낮은 음수일수록 강함)
     var groundY: CGFloat = 0
     var displayLink: CADisplayLink?
@@ -34,7 +34,7 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
     let blockSpawnInterval: TimeInterval = 11.0
     let coinSpawnInterval: TimeInterval = 17.0
     var score: Int = 0            // 점수
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //배경 설정
@@ -54,11 +54,15 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
         view.bringSubviewToFront(JumpButton)
         view.bringSubviewToFront(SlideButton)
 
-        // 캐릭터 초기 위치(지면 위)생성
+        // 캐릭터 초기 위치 및 크기 설정
         if let turtle = Turtle {
-            var frame = turtle.frame
-            frame.origin.y = groundY - frame.height
-            turtle.frame = frame
+            let turtleSize = CGSize(width: 80, height: 80) // 달리는 거북이 크기를 키움
+            turtle.frame = CGRect(
+                x: turtle.frame.origin.x, // 스토리보드의 X위치는 유지
+                y: groundY - turtleSize.height, // 캐릭터를 땅 위에 정확히 위치시킴
+                width: turtleSize.width,
+                height: turtleSize.height
+            )
         }
         
         // 로그인된 사용자의 스킨 정보 적용
@@ -115,8 +119,19 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
             
             // 점프 시 슬라이드 해제
             if isSliding, let turtle = Turtle {
+                applyRunningImage()
+                
+                let originalFrame = turtle.frame
+                let standingHeight = originalFrame.height * 2 // 원래 높이로 복원
+                let standingY = originalFrame.origin.y - (standingHeight - originalFrame.height) // 위쪽으로 위치 조정
+                
                 UIView.animate(withDuration: 0.2) {
-                    turtle.transform = .identity
+                    turtle.frame = CGRect(
+                        x: originalFrame.origin.x,
+                        y: standingY,
+                        width: originalFrame.width,
+                        height: standingHeight
+                    )
                 }
                 isSliding = false
             }
@@ -164,17 +179,39 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
 
         if !isSliding {
             playSoundEffect(named: "SlideBgm", volume: 0.4)
-            // 회전 + 아래로 이동 (y값 증가) 자연스럽게 애니메이션
+            
+            // 슬라이드 이미지로 변경
+            applySlideImage()
+            
+            // 높이를 반으로 줄이고 위치 조정
+            let originalFrame = turtle.frame
+            let slideHeight = originalFrame.height * 0.5 // 높이를 반으로
+            let slideY = originalFrame.origin.y + (originalFrame.height - slideHeight) // 아래쪽 기준으로 위치 조정
+            
             UIView.animate(withDuration: 0.2) {
-                let rotation = CGAffineTransform(rotationAngle: -.pi / 2)
-                let translation = CGAffineTransform(translationX: 0, y: 20) // 아래로 20pt
-                turtle.transform = rotation.concatenating(translation)
+                turtle.frame = CGRect(
+                    x: originalFrame.origin.x,
+                    y: slideY,
+                    width: originalFrame.width,
+                    height: slideHeight
+                )
             }
             isSliding = true
         } else {
             // 원래 상태로 복귀
+            applyRunningImage()
+            
+            let originalFrame = turtle.frame
+            let standingHeight = originalFrame.height * 2 // 원래 높이로 복원
+            let standingY = originalFrame.origin.y - (standingHeight - originalFrame.height) // 위쪽으로 위치 조정
+            
             UIView.animate(withDuration: 0.2) {
-                turtle.transform = .identity
+                turtle.frame = CGRect(
+                    x: originalFrame.origin.x,
+                    y: standingY,
+                    width: originalFrame.width,
+                    height: standingHeight
+                )
             }
             isSliding = false
         }
@@ -453,15 +490,17 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
 
     func applyEquippedSkin() {
         guard let user = Auth.auth().currentUser else {
-            // 비로그인 상태면 기본 스킨으로
-            self.Turtle.image = UIImage(named: "Turtle")
+            // 비로그인 상태면 기본 달리기 스킨으로
+            self.Turtle.image = UIImage(named: "TurtleRun")
+            self.Turtle.contentMode = .scaleAspectFit
             return
         }
         
         db.collection("users").document(user.uid).getDocument { (document, error) in
             guard let document = document, document.exists, let data = document.data() else {
-                // 사용자 정보가 없으면 기본 스킨으로
-                self.Turtle.image = UIImage(named: "Turtle")
+                // 사용자 정보가 없으면 기본 달리기 스킨으로
+                self.Turtle.image = UIImage(named: "TurtleRun")
+                self.Turtle.contentMode = .scaleAspectFit
                 return
             }
             
@@ -469,9 +508,59 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
             
             switch equippedSkin {
             case "tanned_turtle":
-                self.Turtle.image = UIImage(named: "BlackTurtle") // 태닝 거북이 에셋 이름
+                self.Turtle.image = UIImage(named: "BlackTurtleRun") // 태닝 거북이 달리기
             default:
-                self.Turtle.image = UIImage(named: "Turtle") // 기본 거북이 에셋 이름
+                self.Turtle.image = UIImage(named: "TurtleRun") // 기본 거북이 달리기
+            }
+            
+            self.Turtle.contentMode = .scaleAspectFit
+        }
+    }
+    
+    func applyRunningImage() {
+        guard let user = Auth.auth().currentUser else {
+            Turtle.image = UIImage(named: "TurtleRun")
+            return
+        }
+        
+        db.collection("users").document(user.uid).getDocument { (document, error) in
+            guard let document = document, document.exists, let data = document.data() else {
+                self.Turtle.image = UIImage(named: "TurtleRun")
+                return
+            }
+            
+            let equippedSkin = data["equippedSkin"] as? String ?? "basic_turtle"
+            
+            switch equippedSkin {
+            case "tanned_turtle":
+                self.Turtle.image = UIImage(named: "BlackTurtleRun")
+            default:
+                self.Turtle.image = UIImage(named: "TurtleRun")
+            }
+        }
+    }
+    
+    func applySlideImage() {
+        guard let user = Auth.auth().currentUser else {
+            // 비로그인 상태면 기본 슬라이드 이미지
+            Turtle.image = UIImage(named: "TurtleSlide")
+            return
+        }
+        
+        db.collection("users").document(user.uid).getDocument { (document, error) in
+            guard let document = document, document.exists, let data = document.data() else {
+                // 사용자 정보가 없으면 기본 슬라이드 이미지
+                self.Turtle.image = UIImage(named: "TurtleSlide")
+                return
+            }
+            
+            let equippedSkin = data["equippedSkin"] as? String ?? "basic_turtle"
+            
+            switch equippedSkin {
+            case "tanned_turtle":
+                self.Turtle.image = UIImage(named: "BlackTurtleSlide")
+            default:
+                self.Turtle.image = UIImage(named: "TurtleSlide")
             }
         }
     }
