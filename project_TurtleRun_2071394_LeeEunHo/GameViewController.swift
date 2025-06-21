@@ -1,8 +1,9 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import AVFoundation
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, AVAudioPlayerDelegate {
 
     @IBOutlet weak var JumpButton: UIButton!
     @IBOutlet weak var SlideButton: UIButton!
@@ -11,6 +12,8 @@ class GameViewController: UIViewController {
     @IBOutlet weak var Turtle: UIImageView!
 
     let db = Firestore.firestore()
+    var audioPlayer: AVAudioPlayer?
+    var soundEffectPlayers: [AVAudioPlayer] = [] // 효과음 플레이어 배열
     var isJumping = false
     var canDoubleJump = false  // 더블 점프 가능 여부
     var velocity: CGFloat = 0
@@ -84,11 +87,22 @@ class GameViewController: UIViewController {
                 self?.spawnCoin()
             }
         }
+        
+        // 배경음악 재생 시작
+        playBackgroundMusic()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 화면이 사라질 때 배경음악 정지
+        stopBackgroundMusic()
     }
 
     @IBAction func JumpButtonTapped(_ sender: UIButton) {
         if !isJumping {
             // 첫 점프
+            playSoundEffect(named: "JumpBgm", volume: 0.4)
             isJumping = true
             canDoubleJump = true
             velocity = jumpPower
@@ -104,6 +118,7 @@ class GameViewController: UIViewController {
             }
         } else if canDoubleJump {
             // 더블 점프
+            playSoundEffect(named: "JumpBgm", volume: 0.4)
             canDoubleJump = false
             velocity = jumpPower * 0.8  // 더블 점프는 약간 약하게
         }
@@ -144,6 +159,7 @@ class GameViewController: UIViewController {
         guard let turtle = Turtle else { return }
 
         if !isSliding {
+            playSoundEffect(named: "SlideBgm", volume: 0.4)
             // 회전 + 아래로 이동 (y값 증가) 자연스럽게 애니메이션
             UIView.animate(withDuration: 0.2) {
                 let rotation = CGAffineTransform(rotationAngle: -.pi / 2)
@@ -270,17 +286,10 @@ class GameViewController: UIViewController {
     func checkCollision() {
         guard let turtle = Turtle else { return }
 
-        // 블록과의 충돌 체크
-        for block in blocks {
-            if turtle.frame.intersects(block.frame) {
-                endGame()
-                return
-            }
-        }
-
-        // 코인과의 충돌 체크
-        for (index, coin) in coins.enumerated() {
+        // 코인과의 충돌을 먼저 체크합니다.
+        for (index, coin) in coins.enumerated().reversed() { // 안전한 삭제를 위해 역순으로 순회
             if turtle.frame.intersects(coin.frame) {
+                playSoundEffect(named: "CoinBgm")
                 coins.remove(at: index)
                 coin.removeFromSuperview()
                 coinCount += 1
@@ -288,19 +297,32 @@ class GameViewController: UIViewController {
                 // 코인 획득 시 점수 증가
                 score += 77 * coinCount
                 updateScoreLabel()
-                return
+                // 코인을 먹었다고 함수를 종료하지 않고, 다른 코인이나 블록과도 충돌했는지 계속 확인합니다.
+            }
+        }
+        
+        // 그 다음 블록과의 충돌을 체크합니다.
+        for block in blocks {
+            if turtle.frame.intersects(block.frame) {
+                endGame()
+                return // 블록과 충돌하면 게임을 즉시 종료합니다.
             }
         }
     }
 
     func endGame() {
-        // 모든 타이머 중지 함수
+        // 모든 타이머 중지
+        stopAllTimers()
+        stopBackgroundMusic()
+        
+        saveGameResult()
+    }
+    
+    func stopAllTimers() {
         moveTimer?.invalidate()
         blockSpawnTimer?.invalidate()
         coinSpawnTimer?.invalidate()
         displayLink?.invalidate()
-        
-        saveGameResult()
     }
     
     func saveGameResult() {
@@ -380,5 +402,48 @@ class GameViewController: UIViewController {
 
     func updateCoinLabel() { 
         CoinLabel.text = "\(coinCount)"
+    }
+
+    func playBackgroundMusic() {
+        guard let dataAsset = NSDataAsset(name: "Bgm") else {
+            print("Bgm 에셋을 찾을 수 없습니다.")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(data: dataAsset.data)
+            audioPlayer?.numberOfLoops = -1 // -1은 무한 반복을 의미합니다.
+            audioPlayer?.volume = 0.1 // 배경음악 볼륨을 30%로 설정합니다.
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("배경음악 재생 중 오류 발생: \(error.localizedDescription)")
+        }
+    }
+    
+    func stopBackgroundMusic() {
+        audioPlayer?.stop()
+    }
+    
+    func playSoundEffect(named soundName: String, volume: Float = 1.0) {
+        guard let dataAsset = NSDataAsset(name: soundName) else {
+            print("\(soundName) 에셋을 찾을 수 없습니다.")
+            return
+        }
+
+        do {
+            let soundPlayer = try AVAudioPlayer(data: dataAsset.data)
+            soundPlayer.delegate = self
+            soundPlayer.volume = volume // 전달받은 볼륨으로 설정
+            soundEffectPlayers.append(soundPlayer) // 배열에 추가하여 참조 유지
+            soundPlayer.play()
+        } catch {
+            print("\(soundName) 효과음 재생 중 오류 발생: \(error.localizedDescription)")
+        }
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        // 재생이 끝난 플레이어를 배열에서 제거하여 메모리 누수 방지
+        soundEffectPlayers.removeAll { $0 === player }
     }
 }
