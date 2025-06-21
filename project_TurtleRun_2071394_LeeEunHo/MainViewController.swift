@@ -52,6 +52,64 @@ class MainViewController: UIViewController {
         }
     }
     
+    @IBAction func rankButtonTapped(_ sender: UIButton) {
+        showRankingPopup()
+    }
+
+    func showRankingPopup() {
+        // 1. 사용자가 로그인했는지 확인
+        guard let currentUser = Auth.auth().currentUser else {
+            showAlert(title: "랭킹", message: "랭킹을 보려면 먼저 로그인이 필요합니다.")
+            return
+        }
+
+        let group = DispatchGroup()
+        var topPlayersInfo: String?
+        var myInfo: String?
+
+        // 2. 상위 3명 정보 가져오기
+        group.enter()
+        db.collection("users")
+          .order(by: "highScore", descending: true)
+          .limit(to: 3) // 3명까지 가져오기
+          .getDocuments { (querySnapshot, error) in
+            defer { group.leave() }
+            if let documents = querySnapshot?.documents, !documents.isEmpty {
+                var rankingText = ""
+                let medals = ["🥇", "🥈", "🥉"]
+                for (index, document) in documents.enumerated() {
+                    let data = document.data()
+                    let nickname = data["nickname"] as? String ?? "이름없음"
+                    let score = data["highScore"] as? Int ?? 0
+                    let medal = index < medals.count ? medals[index] : " \(index + 1)위."
+                    rankingText += "\(medal) \(nickname) (\(score)점)\n"
+                }
+                topPlayersInfo = rankingText.trimmingCharacters(in: .newlines)
+            } else {
+                topPlayersInfo = "아직 랭킹 기록이 없습니다."
+            }
+        }
+
+        // 3. 내 정보 가져오기
+        group.enter()
+        db.collection("users").document(currentUser.uid).getDocument { (document, error) in
+            defer { group.leave() }
+            if let document = document, document.exists, let data = document.data() {
+                let nickname = data["nickname"] as? String ?? "내 닉네임"
+                let score = data["highScore"] as? Int ?? 0
+                myInfo = "👤 내 점수: \(nickname) (\(score)점)"
+            } else {
+                myInfo = "아직 등록된 점수가 없습니다."
+            }
+        }
+
+        // 4. 모든 정보가 준비되면 팝업 표시
+        group.notify(queue: .main) {
+            let message = "\(topPlayersInfo ?? "랭킹 정보 없음")\n\n\(myInfo ?? "내 점수: 정보 없음")"
+            self.showAlert(title: "🏆 실시간 랭킹", message: message)
+        }
+    }
+    
     // 로그인 상태에 따라 버튼 UI 업데이트
     func updateLoginButtonUI() {
         if let user = Auth.auth().currentUser {

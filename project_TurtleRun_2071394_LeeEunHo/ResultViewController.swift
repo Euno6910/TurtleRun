@@ -6,6 +6,7 @@ class ResultViewController: UIViewController {
     @IBOutlet weak var scoreLabel: UILabel!
     
     var finalScore: Int = 0 // GameViewController로부터 점수를 전달받을 변수
+    var isNewHighScore: Bool = false // 최고기록 갱신 여부를 전달받을 변수
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +23,22 @@ class ResultViewController: UIViewController {
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         view.layer.insertSublayer(gradientLayer, at: 0)
+        
+        // 최고 기록을 갱신했다면 "NEW!" 라벨을 점수 왼쪽에 표시
+        if isNewHighScore {
+            let newRecordLabel = UILabel()
+            newRecordLabel.text = "NEW!"
+            newRecordLabel.font = UIFont.boldSystemFont(ofSize: 20)
+            newRecordLabel.textColor = UIColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0) // 밝은 빨간색
+            newRecordLabel.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(newRecordLabel)
+
+            // 제약조건을 이용해 점수 라벨 왼쪽에 배치
+            NSLayoutConstraint.activate([
+                newRecordLabel.centerYAnchor.constraint(equalTo: scoreLabel.centerYAnchor),
+                newRecordLabel.trailingAnchor.constraint(equalTo: scoreLabel.leadingAnchor, constant: -8)
+            ])
+        }
     }
     
     @IBAction func startButtonTapped(_ sender: UIButton) {

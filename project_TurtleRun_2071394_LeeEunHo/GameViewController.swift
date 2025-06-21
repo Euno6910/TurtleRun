@@ -1,4 +1,6 @@
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 class GameViewController: UIViewController {
 
@@ -8,6 +10,7 @@ class GameViewController: UIViewController {
     @IBOutlet weak var CoinLabel: UILabel!
     @IBOutlet weak var Turtle: UIImageView!
 
+    let db = Firestore.firestore()
     var isJumping = false
     var canDoubleJump = false  // 더블 점프 가능 여부
     var velocity: CGFloat = 0
@@ -28,7 +31,6 @@ class GameViewController: UIViewController {
     let blockSpawnInterval: TimeInterval = 11.0
     let coinSpawnInterval: TimeInterval = 17.0
     var score: Int = 0            // 점수
-    var coinIncreaseLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,13 +46,6 @@ class GameViewController: UIViewController {
         ))
         groundView.backgroundColor = UIColor.black
         view.addSubview(groundView)
-
-        // 코인 증가 라벨 설정
-        coinIncreaseLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 30))
-        coinIncreaseLabel.textColor = .yellow
-        coinIncreaseLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        coinIncreaseLabel.alpha = 0
-        view.addSubview(coinIncreaseLabel)
 
         // 버튼을 맨 위로
         view.bringSubviewToFront(JumpButton)
@@ -278,25 +273,7 @@ class GameViewController: UIViewController {
         // 블록과의 충돌 체크
         for block in blocks {
             if turtle.frame.intersects(block.frame) {
-                print("충돌!")
-                // 모든 타이머 중지
-                moveTimer?.invalidate()
-                blockSpawnTimer?.invalidate()
-                coinSpawnTimer?.invalidate()
-                displayLink?.invalidate()
-                
-                // ResultViewController를 스토리보드 ID를 이용해 인스턴스화합니다.
-                guard let resultVC = self.storyboard?.instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController else {
-                    // 실패 시 기존처럼 메인으로 돌아갑니다.
-                    self.dismiss(animated: true, completion: nil)
-                    return
-                }
-                
-                // 최종 점수를 전달하고 화면을 전환합니다.
-                resultVC.finalScore = self.score
-                resultVC.modalPresentationStyle = .overCurrentContext
-                resultVC.modalTransitionStyle = .crossDissolve
-                self.present(resultVC, animated: true, completion: nil)
+                endGame()
                 return
             }
         }
@@ -304,12 +281,10 @@ class GameViewController: UIViewController {
         // 코인과의 충돌 체크
         for (index, coin) in coins.enumerated() {
             if turtle.frame.intersects(coin.frame) {
-                print("코인!")
                 coins.remove(at: index)
                 coin.removeFromSuperview()
                 coinCount += 1
                 updateCoinLabel()
-                showCoinIncrease()
                 // 코인 획득 시 점수 증가
                 score += 77 * coinCount
                 updateScoreLabel()
@@ -318,22 +293,92 @@ class GameViewController: UIViewController {
         }
     }
 
+    func endGame() {
+        // 모든 타이머 중지 함수
+        moveTimer?.invalidate()
+        blockSpawnTimer?.invalidate()
+        coinSpawnTimer?.invalidate()
+        displayLink?.invalidate()
+        
+        saveGameResult()
+    }
+    
+    func saveGameResult() {
+        // 1. 로그인된 사용자가 있는지 확인
+        guard let user = Auth.auth().currentUser else {
+            // 로그인 상태가 아니면, 저장하지 않고 결과 화면만 표시
+            self.showResultScreen(isNewHighScore: false)
+            return
+        }
+        
+        let userRef = db.collection("users").document(user.uid)
+        
+        // 2. Transaction을 사용하여 데이터의 동시성 문제를 방지하고 안전하게 읽기-수정-쓰기 작업을 수행
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            let userDocument: DocumentSnapshot
+            do {
+                // 먼저 현재 사용자 문서 정보를 가져옵니다.
+                try userDocument = transaction.getDocument(userRef)
+            } catch let fetchError as NSError {
+                errorPointer?.pointee = fetchError
+                return nil
+            }
+            
+            // 기존 데이터 가져오기 (없으면 0으로 초기화)
+            let oldHighScore = userDocument.data()?["highScore"] as? Int ?? 0
+            let oldTotalCoins = userDocument.data()?["coins"] as? Int ?? 0
+            
+            // 새 데이터 계산하기
+            let newTotalCoins = oldTotalCoins + self.coinCount
+            
+            var isNewHighScore = false
+            let newHighScore = max(oldHighScore, self.score)
+            if newHighScore > oldHighScore {
+                isNewHighScore = true
+            }
+            
+            // 데이터 업데이트 준비. merge: true는 다른 필드(예: nickname)를 덮어쓰지 않도록 보장합니다.
+            transaction.setData([
+                "highScore": newHighScore,
+                "coins": newTotalCoins
+            ], forDocument: userRef, merge: true)
+            
+            return isNewHighScore // 이 값을 트랜잭션 성공 시 결과로 전달합니다.
+
+        }) { (object, error) in
+            // 3. 트랜잭션 완료 후 결과 처리
+            if let error = error {
+                print("Transaction failed: \(error)")
+                // 저장에 실패하더라도 점수 화면은 보여줍니다.
+                self.showResultScreen(isNewHighScore: false)
+                return
+            }
+            
+            // 트랜잭션 성공!
+            let isNewHighScore = object as? Bool ?? false
+            self.showResultScreen(isNewHighScore: isNewHighScore)
+        }
+    }
+    
+    func showResultScreen(isNewHighScore: Bool) {
+        guard let resultVC = self.storyboard?.instantiateViewController(withIdentifier: "ResultViewController") as? ResultViewController else {
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        // 최종 점수와 최고기록 갱신 여부를 결과 화면에 전달
+        resultVC.finalScore = self.score
+        resultVC.isNewHighScore = isNewHighScore
+        resultVC.modalPresentationStyle = .overCurrentContext
+        resultVC.modalTransitionStyle = .crossDissolve
+        self.present(resultVC, animated: true, completion: nil)
+    }
+
     func updateScoreLabel() {
         ScoreLabel.text = "\(score)"
     }
 
     func updateCoinLabel() { 
         CoinLabel.text = "\(coinCount)"
-    }
-
-    func showCoinIncrease() {  //코인 획득 시 점수 증가 라벨 표시
-        coinIncreaseLabel.text = "+1"
-        coinIncreaseLabel.center = CGPoint(x: CoinLabel.center.x, y: CoinLabel.center.y - 20)
-        coinIncreaseLabel.alpha = 1
-
-        UIView.animate(withDuration: 1.0, animations: { //획득 애니메이션 1초 후 라벨 사라짐
-            self.coinIncreaseLabel.alpha = 0
-            self.coinIncreaseLabel.center.y -= 30
-        })
     }
 }

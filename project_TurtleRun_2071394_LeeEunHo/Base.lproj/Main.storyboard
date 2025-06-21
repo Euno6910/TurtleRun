@@ -65,6 +65,9 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="랭킹"/>
+                                <connections>
+                                    <action selector="rankButtonTapped:" destination="cea-V0-zwk" eventType="touchUpInside" id="XbO-Vh-ppa"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="DFO-6p-tvQ"/>
