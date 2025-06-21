@@ -218,20 +218,101 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
     }
 
     func spawnBlock() { //블럭 생성
-        let blockWidth: CGFloat = 40
-        let blockHeight: CGFloat = CGFloat.random(in: 30...60)
-        let blockY = CGFloat.random(in: 100...(groundY - blockHeight))
+        // --- 설정 값 ---
+        // 색상 팔레트: 파스텔 톤 + 채도 있는 색상
+        let colorPalette: [UIColor] = [
+            UIColor(red: 0.96, green: 0.76, blue: 0.76, alpha: 1.00), // 핑크
+            UIColor(red: 0.68, green: 0.85, blue: 0.90, alpha: 1.00), // 하늘
+            UIColor(red: 0.60, green: 0.98, blue: 0.60, alpha: 1.00), // 라임
+            UIColor(red: 1.00, green: 0.84, blue: 0.60, alpha: 1.00), // 오렌지
+            UIColor(red: 0.80, green: 0.60, blue: 1.00, alpha: 1.00)  // 보라
+        ]
+        let randomColor = colorPalette.randomElement() ?? UIColor.blue
+        let randomWidth = CGFloat.random(in: 50...120)
+        let turtleRunningHeight = self.Turtle?.frame.height ?? 80
+        let turtleSlidingHeight = turtleRunningHeight * 0.5
         
-        let blockView = UIView(frame: CGRect(
-            x: view.frame.width,
-            y: blockY,
-            width: blockWidth,
-            height: blockHeight
-        ))
-        blockView.backgroundColor = UIColor.blue
-        blockView.layer.cornerRadius = 8
-        view.addSubview(blockView)
-        blocks.append(blockView)
+        // --- 장애물 종류 선택 ---
+        let obstacleType = Int.random(in: 0...3)
+
+        switch obstacleType {
+            
+        // --- 타입 1: 낮은 점프 장애물 (사각형) ---
+        case 0:
+            let blockHeight = CGFloat.random(in: 30...50)
+            let blockView = UIView(frame: CGRect(
+                x: view.frame.width,
+                y: groundY - blockHeight,
+                width: randomWidth,
+                height: blockHeight
+            ))
+            blockView.backgroundColor = randomColor
+            blockView.layer.cornerRadius = 8
+            view.addSubview(blockView)
+            blocks.append(blockView)
+            
+        // --- 타입 2: 높은 점프 장애물 (삼각형) ---
+        case 1:
+            let blockHeight = randomWidth * 0.8 // 높이 대폭 수정
+            let blockView = UIView(frame: CGRect(
+                x: view.frame.width,
+                y: groundY - blockHeight,
+                width: randomWidth,
+                height: blockHeight
+            ))
+            
+            let path = UIBezierPath()
+            path.move(to: CGPoint(x: 0, y: blockHeight))
+            path.addLine(to: CGPoint(x: randomWidth / 2, y: 0))
+            path.addLine(to: CGPoint(x: randomWidth, y: blockHeight))
+            path.close()
+            
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = path.cgPath
+            shapeLayer.fillColor = randomColor.cgColor
+            
+            blockView.backgroundColor = .clear
+            blockView.layer.addSublayer(shapeLayer)
+            
+            view.addSubview(blockView)
+            blocks.append(blockView)
+
+        // --- 타입 3: 슬라이드 장애물 (천장에서 내려옴) ---
+        case 2:
+            let gapHeight = turtleSlidingHeight + 30 // 틈을 약간 더 좁혀서 긴장감 있게
+            let blockHeight = groundY - gapHeight
+            let blockView = UIView(frame: CGRect(
+                x: view.frame.width,
+                y: 0,
+                width: randomWidth * 1.2, // 슬라이드 장애물은 약간 더 넓게
+                height: blockHeight
+            ))
+            blockView.backgroundColor = randomColor
+            blockView.layer.cornerRadius = 8
+            view.addSubview(blockView)
+            blocks.append(blockView)
+            
+        // --- 타입 4: 공중 장애물 (원 모양) ---
+        case 3:
+            let blockHeight = CGFloat.random(in: 60...100)
+            // 거북이가 서서 지나갈 수 있는 높이와 점프해서 넘을 수 있는 높이 사이 어딘가에 배치
+            let blockY = groundY - turtleRunningHeight - CGFloat.random(in: 10...40)
+            
+            let blockView = UIView(frame: CGRect(
+                x: view.frame.width,
+                y: blockY,
+                width: randomWidth,
+                height: blockHeight
+            ))
+            blockView.backgroundColor = randomColor
+            blockView.layer.cornerRadius = blockHeight / 2 // 원 모양으로
+            
+            view.addSubview(blockView)
+            blocks.append(blockView)
+            
+        default:
+            break
+        }
     }
 
     func spawnCoin() { //코인 생성
