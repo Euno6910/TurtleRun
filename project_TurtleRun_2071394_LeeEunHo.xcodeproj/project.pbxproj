@@ -20,6 +20,7 @@
 		9BDDC3D52E06276C0080E58B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9BDDC3D42E06276C0080E58B /* FirebaseFirestore */; };
 		9BDDC3D72E0627710080E58B /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9BDDC3D62E0627710080E58B /* FirebaseFirestoreSwift */; };
 		9BDDC3D92E062CE40080E58B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDC3D82E062CE30080E58B /* LoginViewController.swift */; };
+		9BDDC3DD2E0671010080E58B /* ShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDC3DC2E0671010080E58B /* ShopViewController.swift */; };
 		9BFDF9BB2E00919800E9F600 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFDF9BA2E00919800E9F600 /* MainViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		9B7CA6692DFEE6EB00BA42B4 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		9BDDC3D22E0612180080E58B /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		9BDDC3D82E062CE30080E58B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		9BDDC3DC2E0671010080E58B /* ShopViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopViewController.swift; sourceTree = "<group>"; };
 		9BFDF9BA2E00919800E9F600 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 				9B7CA64B2DFECB8D00BA42B4 /* AppDelegate.swift */,
 				9B7CA64D2DFECB8D00BA42B4 /* SceneDelegate.swift */,
 				9B7CA6512DFECB8D00BA42B4 /* Main.storyboard */,
+				9BDDC3DC2E0671010080E58B /* ShopViewController.swift */,
 				9BDDC3D82E062CE30080E58B /* LoginViewController.swift */,
 				9B7CA6542DFECB9200BA42B4 /* Assets.xcassets */,
 				9B7CA6692DFEE6EB00BA42B4 /* GameViewController.swift */,
@@ -180,6 +183,7 @@
 				9B7CA64C2DFECB8D00BA42B4 /* AppDelegate.swift in Sources */,
 				9B7CA66A2DFEE6EC00BA42B4 /* GameViewController.swift in Sources */,
 				9B7CA64E2DFECB8D00BA42B4 /* SceneDelegate.swift in Sources */,
+				9BDDC3DD2E0671010080E58B /* ShopViewController.swift in Sources */,
 				9BFDF9BB2E00919800E9F600 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

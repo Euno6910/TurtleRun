@@ -60,6 +60,10 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
             frame.origin.y = groundY - frame.height
             turtle.frame = frame
         }
+        
+        // 로그인된 사용자의 스킨 정보 적용
+        applyEquippedSkin()
+        
         // CoinLabel 초기값 설정
         CoinLabel.text = "0"
         
@@ -445,5 +449,30 @@ class GameViewController: UIViewController, AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         // 재생이 끝난 플레이어를 배열에서 제거하여 메모리 누수 방지
         soundEffectPlayers.removeAll { $0 === player }
+    }
+
+    func applyEquippedSkin() {
+        guard let user = Auth.auth().currentUser else {
+            // 비로그인 상태면 기본 스킨으로
+            self.Turtle.image = UIImage(named: "Turtle")
+            return
+        }
+        
+        db.collection("users").document(user.uid).getDocument { (document, error) in
+            guard let document = document, document.exists, let data = document.data() else {
+                // 사용자 정보가 없으면 기본 스킨으로
+                self.Turtle.image = UIImage(named: "Turtle")
+                return
+            }
+            
+            let equippedSkin = data["equippedSkin"] as? String ?? "basic_turtle"
+            
+            switch equippedSkin {
+            case "tanned_turtle":
+                self.Turtle.image = UIImage(named: "BlackTurtle") // 태닝 거북이 에셋 이름
+            default:
+                self.Turtle.image = UIImage(named: "Turtle") // 기본 거북이 에셋 이름
+            }
+        }
     }
 }

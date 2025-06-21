@@ -24,6 +24,12 @@ class LoginViewController: UIViewController {
         view.layer.insertSublayer(gradientLayer, at: 0)
     }
 
+    // 뒤로가기 버튼 클릭 시
+    @IBAction func backButtonTapped(_ sender: UIButton) {
+        // 현재 화면을 닫고 메인으로 돌아가기
+        dismiss(animated: true, completion: nil)
+    }
+
     // 로그인 버튼 클릭 시
     @IBAction func loginButtonTapped(_ sender: UIButton) {
         guard let email = emailTextField.text, !email.isEmpty,

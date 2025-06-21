@@ -31,6 +31,9 @@
                                         <rect key="frame" x="82.5" y="47.5" width="35" height="35"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="상점"/>
+                                        <connections>
+                                            <segue destination="d4x-Qh-pKe" kind="show" identifier="goToShopView" id="CSB-Hd-J3i"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="arX-dd-2Gv">
                                         <rect key="frame" x="0.0" y="94.5" width="200" height="35.5"/>
@@ -167,6 +170,17 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bzS-0x-C9K">
+                                <rect key="frame" x="64" y="20" width="43" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="43" id="pEP-vf-se0"/>
+                                    <constraint firstAttribute="height" constant="30" id="z1L-gd-7td"/>
+                                </constraints>
+                                <state key="normal" title="&lt;Back"/>
+                                <connections>
+                                    <action selector="backButtonTapped:" destination="848-WY-6cL" eventType="touchUpInside" id="0tX-NG-D0n"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wGX-1n-BaM"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -183,6 +197,154 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2S0-Gw-PiP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-825" y="1015.9420289855074"/>
+        </scene>
+        <!--Shop View Controller-->
+        <scene sceneID="ker-jb-wAM">
+            <objects>
+                <viewController storyboardIdentifier="ShopViewController" id="d4x-Qh-pKe" customClass="ShopViewController" customModule="project_TurtleRun_2071394_LeeEunHo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="rq7-5J-Y0r">
+                        <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="67" translatesAutoresizingMaskIntoConstraints="NO" id="73u-Gf-73x">
+                                <rect key="frame" x="94" y="87.5" width="291" height="239"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="Uzl-rq-9HX">
+                                        <rect key="frame" x="0.0" y="0.0" width="112" height="239"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Turtle" translatesAutoresizingMaskIntoConstraints="NO" id="eHF-MQ-BeA">
+                                                <rect key="frame" x="11" y="0.0" width="90" height="128"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="128" id="dFe-6e-Y4I"/>
+                                                    <constraint firstAttribute="width" constant="90" id="xBd-xW-Pmg"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="기본 거북이" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ia6-fe-R8W">
+                                                <rect key="frame" x="0.0" y="145" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="AUN-Ib-tVj"/>
+                                                    <constraint firstAttribute="width" constant="112" id="HyA-b1-rBA"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="평범한 거북이다." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xFG-ZU-fsU">
+                                                <rect key="frame" x="0.0" y="182" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="112" id="56r-mv-QgT"/>
+                                                    <constraint firstAttribute="height" constant="20" id="zH2-gu-iQt"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Td4-D9-OQr">
+                                                <rect key="frame" x="0.0" y="219" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="112" id="3Mn-38-CSM"/>
+                                                    <constraint firstAttribute="height" constant="20" id="B9d-C3-OGM"/>
+                                                </constraints>
+                                                <state key="normal" title="장착"/>
+                                                <connections>
+                                                    <action selector="basicTurtleButtonTapped:" destination="d4x-Qh-pKe" eventType="touchUpInside" id="atC-1w-yoH"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="2GI-2Z-4EK">
+                                        <rect key="frame" x="179" y="0.0" width="112" height="239"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BlackTurtle" translatesAutoresizingMaskIntoConstraints="NO" id="Bra-wZ-UgR">
+                                                <rect key="frame" x="11" y="0.0" width="90" height="128"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="90" id="PpL-mo-WCD"/>
+                                                    <constraint firstAttribute="height" constant="128" id="dFw-wE-45K"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="태닝 거북이" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q1J-3K-HcB">
+                                                <rect key="frame" x="0.0" y="145" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="X61-0V-qGQ"/>
+                                                    <constraint firstAttribute="width" constant="112" id="kFX-8p-abo"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="태닝한 거북이다." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bJO-DN-Tr9">
+                                                <rect key="frame" x="0.0" y="182" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="ctk-66-D84"/>
+                                                    <constraint firstAttribute="width" constant="112" id="xEX-aZ-s3I"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WA5-LC-kv0">
+                                                <rect key="frame" x="0.0" y="219" width="112" height="20"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="XFf-VA-c7c"/>
+                                                    <constraint firstAttribute="width" constant="112" id="xk4-yV-CbZ"/>
+                                                </constraints>
+                                                <state key="normal" title="장착"/>
+                                                <connections>
+                                                    <action selector="tannedTurtleButtonTapped:" destination="d4x-Qh-pKe" eventType="touchUpInside" id="UOr-V2-KYV"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="291" id="6Bh-Fc-hRo"/>
+                                    <constraint firstAttribute="height" constant="239" id="lSg-wY-kzL"/>
+                                </constraints>
+                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4TZ-0u-7JN">
+                                <rect key="frame" x="632" y="20" width="200" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="Pcy-RG-imc"/>
+                                    <constraint firstAttribute="width" constant="200" id="Ymu-hv-b70"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NEs-3W-6di">
+                                <rect key="frame" x="64" y="20" width="43" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="43" id="K5j-aa-j4Z"/>
+                                    <constraint firstAttribute="height" constant="30" id="XtT-kK-Lwh"/>
+                                </constraints>
+                                <state key="normal" title="&lt;Back"/>
+                                <connections>
+                                    <action selector="backButtonTapped:" destination="d4x-Qh-pKe" eventType="touchUpInside" id="wCA-7i-Yfa"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="AbT-cW-oNR"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="4TZ-0u-7JN" firstAttribute="top" secondItem="AbT-cW-oNR" secondAttribute="top" constant="20" id="5Fu-K8-d8O"/>
+                            <constraint firstItem="73u-Gf-73x" firstAttribute="leading" secondItem="AbT-cW-oNR" secondAttribute="leading" constant="50" id="RXy-TZ-t6e"/>
+                            <constraint firstItem="73u-Gf-73x" firstAttribute="centerY" secondItem="rq7-5J-Y0r" secondAttribute="centerY" id="mO0-9z-Cad"/>
+                            <constraint firstItem="NEs-3W-6di" firstAttribute="top" secondItem="AbT-cW-oNR" secondAttribute="top" constant="20" id="pXC-tj-R3l"/>
+                            <constraint firstItem="NEs-3W-6di" firstAttribute="leading" secondItem="AbT-cW-oNR" secondAttribute="leading" constant="20" id="tBa-vU-jC8"/>
+                            <constraint firstItem="AbT-cW-oNR" firstAttribute="trailing" secondItem="4TZ-0u-7JN" secondAttribute="trailing" constant="20" id="xLo-Zu-uyO"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="basicTurtleEquipButton" destination="Td4-D9-OQr" id="k7N-ZT-2Q5"/>
+                        <outlet property="coinBalanceLabel" destination="4TZ-0u-7JN" id="1Fb-QA-aDG"/>
+                        <outlet property="tannedTurtlePurchaseButton" destination="WA5-LC-kv0" id="ygX-bq-OPq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4eJ-x6-10e" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-825" y="-744.92753623188412"/>
         </scene>
         <!--Game View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -385,6 +547,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="BlackTurtle" width="1035" height="1484"/>
         <image name="Jump" width="307" height="317"/>
         <image name="Slide" width="306" height="317"/>
         <image name="Title" width="1024" height="1024"/>
