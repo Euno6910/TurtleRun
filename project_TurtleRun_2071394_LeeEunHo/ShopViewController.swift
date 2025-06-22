@@ -16,7 +16,7 @@ class ShopViewController: UIViewController {
     }
     
     // 스킨 정보
-    let tannedTurtlePrice = 2
+    let tannedTurtlePrice = 1
     let basicSkinID = "basic_turtle"
     let tannedSkinID = "tanned_turtle"
     
